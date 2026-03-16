@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { formatDateStrict, formatDateTimeStrict } from '../../lib/utils';
 import { X, Send, Clock, Timer, CheckSquare, Activity, MessageSquare, User, Plus, Trash2 } from 'lucide-react';
 import api from '../../lib/api';
 import { StatusBadge, PriorityBadge } from '../ui/Badge';
@@ -251,7 +252,7 @@ export default function TaskDetailPanel({ task, siteId, orgId, members, onClose,
                     <div className="flex-1 bg-bg-surface2 rounded-xl rounded-tl-sm p-4 border border-border-default shadow-sm border-l-2 border-l-border-strong">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-sm font-semibold text-text-primary">{c.user_id?.name}</span>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-text-tertiary">{format(new Date(c.createdAt), 'MMM d, HH:mm')}</span>
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-text-tertiary">{formatDateTimeStrict(c.createdAt)}</span>
                       </div>
                       <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">{c.body}</p>
                     </div>
@@ -301,7 +302,7 @@ export default function TaskDetailPanel({ task, siteId, orgId, members, onClose,
                       <div className="flex-1 min-w-0">
                         <div className="flex items-baseline justify-between gap-2">
                           <span className="text-sm font-semibold text-text-primary">{log.hours_logged}h</span>
-                          <span className="text-[10px] font-semibold tracking-wider uppercase text-text-tertiary">{format(new Date(log.log_date), 'MMM d, yyyy')}</span>
+                          <span className="text-[10px] font-semibold tracking-wider uppercase text-text-tertiary">{formatDateStrict(log.log_date)}</span>
                         </div>
                         {log.note ? <div className="text-xs text-text-secondary mt-0.5">{log.note}</div> : <div className="text-xs italic text-text-tertiary mt-0.5">No note provided</div>}
                       </div>
@@ -323,7 +324,7 @@ export default function TaskDetailPanel({ task, siteId, orgId, members, onClose,
                     <div className="flex items-center gap-2 mb-1">
                       <Avatar name={log.user_id?.name} color={log.user_id?.avatar_color} size="xs" />
                       <span className="text-sm font-semibold text-text-primary w-fit">{log.user_id?.name}</span>
-                      <span className="text-[10px] font-mono tracking-wider text-text-tertiary ml-auto">{format(new Date(log.createdAt), 'MMM d, HH:mm')}</span>
+                      <span className="text-[10px] font-mono tracking-wider text-text-tertiary ml-auto">{formatDateTimeStrict(log.createdAt)}</span>
                     </div>
                     <div className="text-sm text-text-secondary">
                       {log.action}

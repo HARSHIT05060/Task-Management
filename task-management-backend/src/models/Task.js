@@ -30,6 +30,8 @@ const taskSchema = new mongoose.Schema({
   milestone: { type: String, trim: true },
   task_list: { type: String, trim: true },
   completion_percentage: { type: Number, default: 0, min: 0, max: 100 },
+  requires_approval: { type: Boolean, default: false },
+  delegated_from: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', default: null },
 }, { timestamps: true });
 
 taskSchema.index({ site_id: 1, status: 1 });

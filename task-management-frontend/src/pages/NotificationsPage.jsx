@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../lib/api';
 import { Bell, CheckCheck } from 'lucide-react';
+import { formatDateTimeStrict } from '../lib/utils';
 import Spinner from '../components/ui/Spinner';
 
 const TYPE_LABELS = {
@@ -105,9 +106,7 @@ export default function NotificationsPage() {
                       {n.message}
                     </p>
                     <p className="text-xs text-text-tertiary mt-1.5">
-                      {new Date(n.createdAt).toLocaleDateString(undefined, {
-                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                      })}
+                      {formatDateTimeStrict(n.createdAt)}
                     </p>
                   </div>
                 </div>

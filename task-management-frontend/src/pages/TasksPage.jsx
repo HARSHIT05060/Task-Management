@@ -35,7 +35,7 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [filters, setFilters] = useState({ status: '', priority: '', assignee_id: '' });
+  const [filters, setFilters] = useState({ status: '', priority: '', assignee_id: '', due_today: false });
   const [showFilters, setShowFilters] = useState(false);
 
   const loadTasks = useCallback(async () => {
@@ -44,6 +44,7 @@ export default function TasksPage() {
     if (filters.status) params.set('status', filters.status);
     if (filters.priority) params.set('priority', filters.priority);
     if (filters.assignee_id) params.set('assignee_id', filters.assignee_id);
+    if (filters.due_today) params.set('due_today', 'true');
     const res = await api.get(`/orgs/${org._id}/sites/${siteId}/tasks?${params}&limit=200`);
     setTasks(res.data.tasks || []);
   }, [org, siteId, filters]);
@@ -162,7 +163,17 @@ export default function TasksPage() {
             <option value="">Assignee (Any)</option>
             {members.map(m => <option key={m.user_id?._id} value={m.user_id?._id}>{m.user_id?.name}</option>)}
           </select>
-          {activeFilterCount > 0 && <button className="btn btn-ghost btn-sm text-text-tertiary ml-2" onClick={() => setFilters({ status: '', priority: '', assignee_id: '' })}>Clear all</button>}
+          
+          <div className="h-4 w-px bg-border-default mx-1 shrink-0" />
+          
+          <button 
+            className={`btn btn-sm transition-colors ${filters.due_today ? 'bg-accent/10 text-accent border border-accent/20' : 'btn-secondary text-text-secondary'}`}
+            onClick={() => setFilters(f => ({ ...f, due_today: !f.due_today, assignee_id: !f.due_today ? user?._id : f.assignee_id }))}
+          >
+           ☀️ My Day
+          </button>
+
+          {activeFilterCount > 0 && <button className="btn btn-ghost btn-sm text-text-tertiary ml-2" onClick={() => setFilters({ status: '', priority: '', assignee_id: '', due_today: false })}>Clear all</button>}
         </div>
       </div>
 

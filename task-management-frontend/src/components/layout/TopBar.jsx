@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, Menu } from 'lucide-react';
 import api from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../ui/Avatar';
@@ -9,18 +9,18 @@ import Tooltip from '../ui/Tooltip';
 
 const pageTitles = {
   '/dashboard':    'Owner Dashboard',
-  '/sites':        'Sites',
+  '/sites':        'Branches',
   '/notifications':'Notifications',
 };
 
 function getTitle(pathname) {
   if (pageTitles[pathname]) return pageTitles[pathname];
   if (pathname.match(/\/sites\/[^/]+\/tasks/)) return 'Tasks';
-  if (pathname.match(/\/sites\/[^/]+/)) return 'Site Detail';
+  if (pathname.match(/\/sites\/[^/]+/)) return 'Branch Detail';
   return 'TaskFlow';
 }
 
-export default function TopBar({ collapsed }) {
+export default function TopBar({ collapsed, onMenuClick }) {
   const location = useLocation();
   const { user, org } = useAuth();
   const [unread, setUnread] = useState(0);
@@ -43,8 +43,13 @@ export default function TopBar({ collapsed }) {
   }, []);
 
   return (
-    <header className={`fixed top-0 right-0 h-[60px] bg-bg-surface/80 backdrop-blur-md border-b border-border-default z-40 transition-all duration-300 flex items-center justify-end px-6 ${collapsed ? 'w-[calc(100%-68px)]' : 'w-[calc(100%-248px)]'}`}>
-      <div className="flex items-center gap-4">
+    <header className={`fixed top-0 right-0 h-[60px] bg-bg-surface/80 backdrop-blur-md border-b border-border-default z-30 transition-all duration-300 flex items-center justify-between md:justify-end px-4 md:px-6 w-full md:w-[calc(100%-248px)] ${collapsed ? 'md:w-[calc(100%-68px)]' : ''}`}>
+      {/* Mobile Menu Toggle */}
+      <button className="md:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary hover:bg-bg-surface2 rounded-lg transition-colors" onClick={onMenuClick}>
+        <Menu size={20} />
+      </button>
+
+      <div className="flex items-center gap-2 md:gap-4">
         {/* Search */}
         <Tooltip content={<>Search tasks <kbd className="ml-2 font-mono text-[10px] bg-white/20 px-1 rounded">/</kbd></>} side="bottom">
           <div className="flex items-center gap-2 bg-bg-surface2 border border-border-default rounded-lg px-3 py-2 w-64 transition-colors focus-within:border-accent ring-accent/20">
@@ -60,7 +65,7 @@ export default function TopBar({ collapsed }) {
           </div>
         </Tooltip>
 
-        <div className="flex items-center gap-1 border-border-default pl-2">
+        <div className="flex items-center gap-1 border-l border-border-default pl-2 md:pl-4 ml-1 md:ml-0">
           {/* Notification bell */}
           <Tooltip content="Notifications" side="bottom">
             <Link to="/notifications" className="relative inline-flex p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-surface2 transition-colors">

@@ -24,7 +24,7 @@ function AddMemberModal({ orgId, siteId, onClose, onAdded }) {
     setLoading(true);
     try {
       const { data } = await api.post(`/orgs/${orgId}/sites/${siteId}/members`, { user_id: selected, site_role: role });
-      toast.success('Member added!', { description: 'They now have access to this site.' });
+      toast.success('Member added!', { description: 'They now have access to this branch.' });
       onAdded(data);
       onClose();
     } catch (err) { toast.error(err.response?.data?.error || 'Failed to add member'); }
@@ -46,7 +46,7 @@ function AddMemberModal({ orgId, siteId, onClose, onAdded }) {
           </select>
         </div>
         <div>
-          <label className="form-label">Site role</label>
+          <label className="form-label">Branch role</label>
           <select className="select" value={role} onChange={e => setRole(e.target.value)}>
             {['manager', 'employee', 'participant', 'observer'].map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
           </select>
@@ -95,13 +95,13 @@ export default function SiteDetailPage() {
       <div className="h-64 bg-bg-surface border border-border-default rounded-xl shrink-0" />
     </div>
   );
-  if (!site) return <div className="p-10 text-center text-text-muted bg-bg-surface border border-border-default border-dashed rounded-xl mt-8">Site not found</div>;
+  if (!site) return <div className="p-10 text-center text-text-muted bg-bg-surface border border-border-default border-dashed rounded-xl mt-8">Branch not found</div>;
 
   return (
     <div className="px-8 py-6 animate-in fade-in slide-in-bottom duration-300">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <button className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-surface2 transition-colors -ml-2" onClick={() => navigate('/sites')} title="Back to sites">
+        <button className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-surface2 transition-colors -ml-2" onClick={() => navigate('/sites')} title="Back to branches">
           <ArrowLeft size={18} />
         </button>
         <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-border-default bg-bg-surface">
@@ -111,9 +111,17 @@ export default function SiteDetailPage() {
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">{site.name}</h1>
           {site.location && <p className="text-sm text-text-secondary mt-0.5 tracking-wide">{site.location}</p>}
         </div>
-        <button className="btn btn-primary ml-auto shadow-sm px-3 py-2" onClick={() => navigate(`/sites/${siteId}/tasks`)}>
-          <CheckSquare size={16} />Open Tasks
-        </button>
+        
+        <div className="ml-auto flex items-center gap-3">
+          {(isOwnerOrAdmin || members.find(m => m.user_id?._id === user?._id)?.site_role === 'manager') && (
+            <button className="btn btn-secondary shadow-sm px-3 py-2 text-accent border-accent/20 hover:border-accent" onClick={() => navigate(`/sites/${siteId}/manager`)}>
+              <ShieldAlert size={16} />Manager Portal
+            </button>
+          )}
+          <button className="btn btn-primary shadow-sm px-3 py-2" onClick={() => navigate(`/sites/${siteId}/tasks`)}>
+            <CheckSquare size={16} />Open Tasks
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -127,7 +135,7 @@ export default function SiteDetailPage() {
       {tab === 'members' && (
         <div className="bg-bg-surface border border-border-default rounded-xl shadow-sm overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-border-default">
-            <span className="font-semibold text-text-primary">Site Members</span>
+            <span className="font-semibold text-text-primary">Branch Members</span>
             {isOwnerOrAdmin && (
               <button className="btn btn-secondary btn-sm" onClick={() => setShowAddMember(true)}>
                 <Plus size={14} />Add Member
@@ -141,7 +149,7 @@ export default function SiteDetailPage() {
                   <th className="px-5 py-3 font-medium">Member</th>
                   <th className="px-5 py-3 font-medium">Email</th>
                   <th className="px-5 py-3 font-medium">Org Role</th>
-                  <th className="px-5 py-3 font-medium">Site Role</th>
+                  <th className="px-5 py-3 font-medium">Branch Role</th>
                   {isOwnerOrAdmin && <th className="px-5 py-3 font-medium w-[80px]">Actions</th>}
                 </tr>
               </thead>
@@ -171,7 +179,7 @@ export default function SiteDetailPage() {
             </table>
             {members.length === 0 && (
               <div className="py-12 text-center text-text-tertiary text-sm">
-                No members attached to this site yet.
+                No members attached to this branch yet.
               </div>
             )}
           </div>
@@ -186,7 +194,7 @@ export default function SiteDetailPage() {
       {memberToRemove && (
         <ConfirmationModal
           title="Remove Member"
-          message="Are you sure you want to remove this member from the site? They will lose access to all tasks and data within this site."
+          message="Are you sure you want to remove this member from the branch? They will lose access to all tasks and data within this branch."
           confirmText="Remove"
           onConfirm={handleRemoveMember}
           onClose={() => setMemberToRemove(null)}

@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { CheckSquare, Zap, BarChart2, Users } from 'lucide-react';
 
 const features = [
-  { icon: Zap, text: 'Multi-site task coordination in one view' },
+  { icon: Zap, text: 'Multi-branch task coordination in one view' },
   { icon: Users, text: 'Role-based access for every team' },
-  { icon: BarChart2, text: 'Real-time health scores for all sites' },
+  { icon: BarChart2, text: 'Real-time health scores for all branches' },
   { icon: CheckSquare, text: 'Kanban, Gantt, Calendar & Workload views' },
 ];
 
@@ -40,10 +40,10 @@ export default function LoginPage() {
           </div>
           
           <h2 className="text-4xl font-bold leading-tight mb-4 tracking-tight">
-            Manage every site.<br />Every team.<br />Every task.
+            Manage every branch.<br />Every team.<br />Every task.
           </h2>
           <p className="text-white/70 text-base mb-10 max-w-sm leading-relaxed">
-            A multi-site, multi-role task platform built for owners who need total operational visibility.
+            A multi-branch, multi-role task platform built for owners who need total operational visibility.
           </p>
           
           <div className="flex flex-col gap-4">

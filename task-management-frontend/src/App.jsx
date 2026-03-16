@@ -4,10 +4,11 @@ import AppShell from './components/layout/AppShell';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import SitesPage from './pages/SitesPage';
-import SiteDetailPage from './pages/SiteDetailPage';
+import BranchesPage from './pages/SitesPage';
+import BranchDetailPage from './pages/SiteDetailPage';
 import TasksPage from './pages/TasksPage';
 import NotificationsPage from './pages/NotificationsPage';
+import ManagerDashboard from './components/layout/ManagerDashboard';
 
 function ProtectedRoute({ children }) {
   const { token } = useAuth();
@@ -27,8 +28,9 @@ export default function App() {
       <Route path="/" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard"                              element={<DashboardPage />} />
-        <Route path="sites"                                  element={<SitesPage />} />
-        <Route path="sites/:siteId"                          element={<SiteDetailPage />} />
+        <Route path="sites"                                  element={<BranchesPage />} />
+        <Route path="sites/:siteId"                          element={<BranchDetailPage />} />
+        <Route path="sites/:siteId/manager"                  element={<ManagerDashboard />} />
         <Route path="sites/:siteId/tasks"                    element={<TasksPage />} />
         <Route path="notifications"                          element={<NotificationsPage />} />
       </Route>

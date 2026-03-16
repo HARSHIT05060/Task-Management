@@ -25,7 +25,7 @@ function CreateSiteModal({ orgId, onClose, onCreated }) {
   };
 
   return (
-    <Modal title="Create New Site" onClose={onClose}
+    <Modal title="Create New Branch" onClose={onClose}
       footer={<>
         <button className="btn btn-secondary" onClick={onClose} type="button">Cancel</button>
         <button className="btn btn-primary" onClick={handleSubmit} disabled={!form.name || loading}>{loading ? 'Creating…' : 'Create Site'}</button>
@@ -45,7 +45,7 @@ function CreateSiteModal({ orgId, onClose, onCreated }) {
           </div>
         </div>
         <div>
-          <label className="form-label">Site Name</label>
+          <label className="form-label">Branch Name</label>
           <input className="input" placeholder="e.g. North Hub" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} autoFocus />
         </div>
         <div>
@@ -86,12 +86,12 @@ export default function SitesPage() {
     <div className="px-8 py-6 animate-in fade-in slide-in-bottom duration-300">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="title-page">All Sites</h1>
+          <h1 className="title-page">All Branches</h1>
           <p className="text-sm text-text-secondary mt-1">Manage physical or logical workspaces</p>
         </div>
         {isOwnerOrAdmin && (
           <button className="btn btn-primary px-3 py-2" onClick={() => setShowCreate(true)}>
-            <Plus size={16} />New Site
+            <Plus size={16} />New Branch
           </button>
         )}
       </div>
@@ -100,7 +100,7 @@ export default function SitesPage() {
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
         <input
           className="input pl-10 h-11"
-          placeholder="Search sites..."
+          placeholder="Search branches..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -109,10 +109,10 @@ export default function SitesPage() {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-16 text-center text-text-muted mt-8 bg-bg-surface border border-border-default rounded-xl border-dashed">
           <Globe2 size={48} className="opacity-20 mb-4" />
-          <h3 className="text-lg font-semibold text-text-secondary">No sites found</h3>
-          <p className="text-sm mt-1 max-w-sm">There are no operational sites matching your search.</p>
+          <h3 className="text-lg font-semibold text-text-secondary">No branches found</h3>
+          <p className="text-sm mt-1 max-w-sm">There are no operational branches matching your search.</p>
           {isOwnerOrAdmin && (
-            <button className="btn btn-secondary mt-6" onClick={() => setShowCreate(true)}>Create First Site</button>
+            <button className="btn btn-secondary mt-6" onClick={() => setShowCreate(true)}>Create First Branch</button>
           )}
         </div>
       ) : (

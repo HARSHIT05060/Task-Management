@@ -7,6 +7,7 @@ const siteSchema = new mongoose.Schema({
   status: { type: String, enum: ['active', 'paused'], default: 'active' },
   description: { type: String, trim: true },
   color: { type: String, default: '#6366f1' },
+  health_score: { type: Number, default: 100, min: 0, max: 100 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Site', siteSchema);

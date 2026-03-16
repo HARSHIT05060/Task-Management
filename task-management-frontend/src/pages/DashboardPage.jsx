@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../lib/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, AlertCircle, CheckCircle2, Globe2, ArrowRight } from 'lucide-react';
+import { formatDateStrict } from '../lib/utils';
 import Avatar from '../components/ui/Avatar';
 import { StatusBadge } from '../components/ui/Badge';
 
@@ -55,13 +56,13 @@ export default function DashboardPage() {
     </div>
   );
 
-  const { kpis, siteHealth, tasksByAssignee, tasksByStatus, recentTasks } = data;
+  const { kpis, siteHealth, tasksByAssignee, tasksByStatus, recentTasks, topOverdueTasks } = data;
 
   const kpiCards = [
     { label: 'Total Tasks', value: kpis.totalTasks, icon: CheckCircle2, color: 'var(--accent)', bg: 'var(--accent-light)', sub: `${kpis.inProgressTasks} in progress` },
     { label: 'Overdue', value: kpis.overdueTasks, icon: AlertCircle, color: 'var(--red)', bg: 'var(--red-light)', sub: 'Need attention' },
     { label: 'Completion Rate', value: `${kpis.completionRate}%`, icon: TrendingUp, color: 'var(--green)', bg: 'var(--green-light)', sub: `${kpis.completedTasks} completed` },
-    { label: 'Active Sites', value: kpis.totalSites, icon: Globe2, color: 'var(--purple)', bg: 'var(--purple-light)', sub: 'Across your org' },
+    { label: 'Active Branches', value: kpis.totalSites, icon: Globe2, color: 'var(--purple)', bg: 'var(--purple-light)', sub: 'Across your org' },
   ];
 
   const statusChartData = tasksByStatus.map(s => ({ name: s._id, value: s.count, color: STATUS_COLORS[s._id] || 'var(--accent)' }));
@@ -73,7 +74,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="title-page">Owner Dashboard</h1>
-          <p className="text-sm text-text-secondary mt-1">Real-time health across all your sites — {org?.name}</p>
+          <p className="text-sm text-text-secondary mt-1">Real-time health across all your branches — {org?.name}</p>
         </div>
       </div>
 
@@ -99,7 +100,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="bg-bg-surface border border-border-default rounded-xl shadow-sm overflow-hidden flex flex-col flex-1">
             <div className="px-6 py-4 border-b border-border-default bg-bg-surface2/50 flex justify-between items-center">
-              <span className="title-section">Site Health Overview</span>
+              <span className="title-section">Branch Health Overview</span>
               <button className="btn btn-ghost btn-sm text-accent font-medium hover:text-accent-hover" onClick={() => navigate('/sites')}>View all<ArrowRight size={14} /></button>
             </div>
             <div className="flex flex-col">
@@ -154,10 +155,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Employee utilization */}
         <div className="bg-bg-surface border border-border-default rounded-xl p-6 shadow-sm">
-          <div className="title-section mb-6">Employee Workload</div>
+          <div className="title-section mb-6">Staff Workload</div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={assigneeChartData} layout="vertical" margin={{ left: 0, right: 10 }}>
@@ -170,21 +171,19 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent tasks */}
+        {/* Top 5 Overdue */}
         <div className="bg-bg-surface border border-border-default rounded-xl p-6 shadow-sm">
-          <div className="title-section mb-6">Recent Activity</div>
+          <div className="title-section mb-6 text-red flex items-center gap-2"><AlertCircle size={18} /> Top 5 Overdue</div>
           <div className="flex flex-col">
-            {recentTasks.slice(0, 5).map((task, i) => (
-              <div key={task._id} className="px-5 py-3.5 border-b border-border-default flex gap-3 items-center hover:bg-bg-surface2/30 transition-colors cursor-pointer" onClick={() => navigate(`/sites/${task.site_id}/tasks?task=${task._id}`)}>
-
-                <Avatar name={task.assignee_id?.name || 'A'} color={task.assignee_id?.avatar_color} size="sm" />
-                <div className="overflow-hidden">
-                  <div className="text-sm font-medium text-text-primary truncate">{task.title}</div>
-                  <div className="text-xs text-text-tertiary">Updated {new Date(task.updatedAt).toLocaleDateString()}</div>
+            {topOverdueTasks?.length === 0 && <p className="text-sm text-text-tertiary">No overdue tasks. Great job!</p>}
+            {topOverdueTasks?.map((task) => (
+              <div key={task._id} className="px-5 py-3 border-b border-border-default flex gap-3 items-center hover:bg-bg-red/5 transition-colors cursor-pointer" onClick={() => navigate(`/sites/${task.site_id._id}/tasks?task=${task._id}`)}>
+                <div className="overflow-hidden flex-1">
+                  <div className="text-sm font-semibold text-text-primary truncate">{task.title}</div>
+                  <div className="text-xs text-text-tertiary truncate">Branch: {task.site_id?.name || 'Unknown'}</div>
+                  <div className="text-xs font-semibold text-red mt-1 flex items-center gap-1"><AlertCircle size={12} /> Due: {formatDateStrict(task.due_date)}</div>
                 </div>
-                <div className="shrink-0 pl-2">
-                  <StatusBadge status={task.status} />
-                </div>
+                <Avatar name={task.assignee_id?.name || 'Unassigned'} color={task.assignee_id?.avatar_color} size="sm" />
               </div>
             ))}
           </div>

@@ -60,6 +60,18 @@ router.get('/', async (req, res, next) => {
       { $group: { _id: '$priority', count: { $sum: 1 } } },
     ]);
 
+    // Top 5 Overdue tasks
+    const topOverdueTasks = await Task.find({
+      site_id: { $in: siteIds },
+      due_date: { $lt: now },
+      status: { $nin: ['Completed', 'Cancelled'] }
+    })
+      .populate('assignee_id', 'name avatar_color')
+      .populate('site_id', 'name')
+      .sort({ due_date: 1 })
+      .limit(5)
+      .select('title status priority due_date site_id updatedAt assignee_id');
+
     // Recent tasks
     const recentTasks = await Task.find({ site_id: { $in: siteIds } })
       .populate('assignee_id', 'name avatar_color')
@@ -73,6 +85,7 @@ router.get('/', async (req, res, next) => {
       tasksByAssignee,
       tasksByStatus,
       tasksByPriority,
+      topOverdueTasks,
       recentTasks,
     });
   } catch (err) { next(err); }

@@ -42,17 +42,17 @@ async function seed() {
   // Create organization
   const org = await Organization.create({ name: 'Apex Operations', plan: 'pro', owner_id: new mongoose.Types.ObjectId() });
 
-  // Create users
+  // Create users - Indian Context
   const hashedPw = await bcrypt.hash('password123', 12);
   const usersData = [
-    { name: 'Alex Morgan', email: 'alex@apex.com', org_role: 'owner', avatar_color: avatarColors[0] },
-    { name: 'Jordan Lee', email: 'jordan@apex.com', org_role: 'admin', avatar_color: avatarColors[1] },
-    { name: 'Sam Rivera', email: 'sam@apex.com', org_role: 'member', avatar_color: avatarColors[2] },
-    { name: 'Casey Kim', email: 'casey@apex.com', org_role: 'member', avatar_color: avatarColors[3] },
-    { name: 'Morgan Patel', email: 'morgan@apex.com', org_role: 'member', avatar_color: avatarColors[4] },
-    { name: 'Taylor Chen', email: 'taylor@apex.com', org_role: 'member', avatar_color: avatarColors[5] },
-    { name: 'Riley Johnson', email: 'riley@apex.com', org_role: 'member', avatar_color: avatarColors[6] },
-    { name: 'Drew Williams', email: 'drew@apex.com', org_role: 'member', avatar_color: avatarColors[7] },
+    { name: 'Rahul Sharma', email: 'rahul@apex.in', org_role: 'owner', avatar_color: avatarColors[0] },
+    { name: 'Priya Patel', email: 'priya@apex.in', org_role: 'admin', avatar_color: avatarColors[1] },
+    { name: 'Amit Kumar', email: 'amit@apex.in', org_role: 'member', avatar_color: avatarColors[2] },
+    { name: 'Neha Singh', email: 'neha@apex.in', org_role: 'member', avatar_color: avatarColors[3] },
+    { name: 'Vikram Reddy', email: 'vikram@apex.in', org_role: 'member', avatar_color: avatarColors[4] },
+    { name: 'Sneha Gupta', email: 'sneha@apex.in', org_role: 'member', avatar_color: avatarColors[5] },
+    { name: 'Rohit Verma', email: 'rohit@apex.in', org_role: 'member', avatar_color: avatarColors[6] },
+    { name: 'Anjali Desai', email: 'anjali@apex.in', org_role: 'member', avatar_color: avatarColors[7] },
   ];
 
   const users = await User.insertMany(
@@ -62,33 +62,33 @@ async function seed() {
   await org.save();
   console.log(`Created ${users.length} users`);
 
-  // Create sites
+  // Create branches (sites) for Indian context
   const sitesData = [
-    { name: 'Headquarters', location: 'New York, NY', color: '#6366f1', description: 'Main office operations hub' },
-    { name: 'West Coast Hub', location: 'San Francisco, CA', color: '#8b5cf6', description: 'Product and engineering teams' },
-    { name: 'Manufacturing Plant', location: 'Austin, TX', color: '#f59e0b', description: 'Production and QA operations' },
+    { name: 'Mumbai HQ', location: 'Mumbai, MH', color: '#6366f1', description: 'Main office operations hub', health_score: 92 },
+    { name: 'Delhi NCR Hub', location: 'Gurugram, HR', color: '#8b5cf6', description: 'Product and engineering teams', health_score: 85 },
+    { name: 'Bengaluru Tech Park', location: 'Bengaluru, KA', color: '#f59e0b', description: 'Development and QA operations', health_score: 78 },
   ];
   const sites = await Site.insertMany(sitesData.map(s => ({ ...s, org_id: org._id, status: 'active' })));
-  console.log(`Created ${sites.length} sites`);
+  console.log(`Created ${sites.length} branches`);
 
-  // Assign members to sites
+  // Assign members to branches
   const memberAssignments = [
-    // HQ: users[0,1,2,3]
-    { site_id: sites[0]._id, user_id: users[0]._id, site_role: 'manager' },
-    { site_id: sites[0]._id, user_id: users[1]._id, site_role: 'manager' },
-    { site_id: sites[0]._id, user_id: users[2]._id, site_role: 'employee' },
-    { site_id: sites[0]._id, user_id: users[3]._id, site_role: 'employee' },
-    // West Coast: users[1,4,5]
-    { site_id: sites[1]._id, user_id: users[1]._id, site_role: 'manager' },
-    { site_id: sites[1]._id, user_id: users[4]._id, site_role: 'employee' },
-    { site_id: sites[1]._id, user_id: users[5]._id, site_role: 'employee' },
-    // Plant: users[0,6,7]
-    { site_id: sites[2]._id, user_id: users[0]._id, site_role: 'manager' },
-    { site_id: sites[2]._id, user_id: users[6]._id, site_role: 'employee' },
-    { site_id: sites[2]._id, user_id: users[7]._id, site_role: 'employee' },
+    // Mumbai: users[0,1,2,3]
+    { site_id: sites[0]._id, user_id: users[0]._id, site_role: 'manager', max_active_tasks: 10, current_active_tasks: 2 },
+    { site_id: sites[0]._id, user_id: users[1]._id, site_role: 'manager', max_active_tasks: 10, current_active_tasks: 1 },
+    { site_id: sites[0]._id, user_id: users[2]._id, site_role: 'employee', max_active_tasks: 5, current_active_tasks: 3 },
+    { site_id: sites[0]._id, user_id: users[3]._id, site_role: 'employee', max_active_tasks: 5, current_active_tasks: 2 },
+    // Delhi NCR: users[1,4,5]
+    { site_id: sites[1]._id, user_id: users[1]._id, site_role: 'manager', max_active_tasks: 10, current_active_tasks: 2 },
+    { site_id: sites[1]._id, user_id: users[4]._id, site_role: 'employee', max_active_tasks: 5, current_active_tasks: 4 }, // Nearing limit
+    { site_id: sites[1]._id, user_id: users[5]._id, site_role: 'employee', max_active_tasks: 5, current_active_tasks: 1 },
+    // Bengaluru: users[0,6,7]
+    { site_id: sites[2]._id, user_id: users[0]._id, site_role: 'manager', max_active_tasks: 10, current_active_tasks: 0 },
+    { site_id: sites[2]._id, user_id: users[6]._id, site_role: 'employee', max_active_tasks: 4, current_active_tasks: 4 }, // At limit!
+    { site_id: sites[2]._id, user_id: users[7]._id, site_role: 'employee', max_active_tasks: 5, current_active_tasks: 1 },
   ];
   await SiteMember.insertMany(memberAssignments);
-  console.log('Assigned site members');
+  console.log('Assigned branch members');
 
   // Generate tasks per site
   const taskTemplates = [
@@ -129,6 +129,7 @@ async function seed() {
         start_date: daysFromNow(daysOffset - 7),
         milestone: i < 5 ? 'Phase 1 – Foundation' : i < 10 ? 'Phase 2 – Core Features' : 'Phase 3 – Polish',
         task_list: i < 5 ? 'Backlog' : i < 10 ? 'Sprint 1' : 'Sprint 2',
+        requires_approval: (i % 3 === 0), // Every 3rd task requires approval for V2 gates
         checklist: [
           { text: 'Review requirements', completed: t.status !== 'Not Started' },
           { text: 'Implementation', completed: ['In Review', 'Completed'].includes(t.status) },

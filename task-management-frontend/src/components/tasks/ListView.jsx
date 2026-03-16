@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { formatDateStrict } from '../../lib/utils';
 import { StatusBadge, PriorityBadge } from '../ui/Badge';
 import Avatar from '../ui/Avatar';
 import { LayoutList, SearchX } from 'lucide-react';
@@ -63,7 +63,7 @@ export default function ListView({ tasks, members, onTaskSelect, onTaskUpdate })
                   ) : <span className="text-xs text-text-tertiary italic">Unassigned</span>}
                 </td>
                 <td className="px-5 py-3 text-sm text-text-secondary whitespace-nowrap">
-                  {task.due_date ? format(new Date(task.due_date), 'MMM d, yyyy') : '—'}
+                  {task.due_date ? formatDateStrict(task.due_date) : '—'}
                 </td>
               </tr>
             ))}

@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react';
 import { DndContext, PointerSensor, useSensor, useSensors, DragOverlay, closestCorners } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { format, isAfter } from 'date-fns';
+import { isAfter } from 'date-fns';
+import { formatDateStrict } from '../../lib/utils';
 import { Clock } from 'lucide-react';
 import { PriorityBadge } from '../ui/Badge';
 import Avatar from '../ui/Avatar';
@@ -43,7 +44,7 @@ function KanbanCard({ task, onSelect, isDragging }) {
       <div className="flex items-center justify-between border-t border-border-default pt-2.5 mt-auto">
         <div className={`flex items-center gap-1.5 text-xs font-medium ${overdue ? 'text-red' : 'text-text-tertiary'}`}>
           <Clock size={12} />
-          {task.due_date ? format(new Date(task.due_date), 'MMM d') : 'No due date'}
+          {task.due_date ? formatDateStrict(task.due_date) : 'No due date'}
         </div>
         {task.assignee_id ? <Avatar name={task.assignee_id.name} color={task.assignee_id.avatar_color} size="sm" /> : 
           <div className="w-6 h-6 rounded-full border border-dashed border-border-strong flex items-center justify-center bg-bg-surface2 text-text-tertiary text-[10px]" title="Unassigned">?</div>
